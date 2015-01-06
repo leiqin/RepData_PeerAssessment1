@@ -18,7 +18,6 @@ activity <- transform(activity, date=as.Date(date, '%Y-%m-%d'))
 
 ```{r}
 library(plyr)
-library(ggplot2)
 
 per_day <- ddply(activity, .(date), summarize, steps=sum(steps, na.rm=TRUE))
 with(per_day, hist(steps, col='blue', breaks=20))
@@ -85,3 +84,15 @@ These values differ from the estimates from the first part of the assignment.
 The estimates of the total daily number of steps is get larger by imputing missing data.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r}
+nomiss$weekday <- ifelse(weekdays(nomiss$date) %in% c('Saturday', 'Sunday', '星期六', '星期日'), 'weekend', 'weekday')
+nomiss$weekday <- factor(nomiss$weekday)
+```
+
+```{r}
+library(ggplot2)
+
+DF <- ddply(nomiss, .(interval, weekday), summarize, steps=mean(steps))
+qplot(interval, steps, data=DF, geom='line', facets=~ weekday)
+```

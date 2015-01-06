@@ -15,7 +15,6 @@ activity <- transform(activity, date=as.Date(date, '%Y-%m-%d'))
 
 ```r
 library(plyr)
-library(ggplot2)
 
 per_day <- ddply(activity, .(date), summarize, steps=sum(steps, na.rm=TRUE))
 with(per_day, hist(steps, col='blue', breaks=20))
@@ -29,9 +28,9 @@ mean_per_day <- mean(per_day$steps, na.rm=TRUE)
 median_per_day <- median(per_day$steps, na.rm=TRUE)
 ```
 
-the **mean** total number of steps taken per day is 9354.2.
+The **mean** total number of steps taken per day is 9354.2.
 
-the **median** total number of steps taken per day is 10395.
+The **median** total number of steps taken per day is 10395.
 
 ## What is the average daily activity pattern?
 
@@ -50,7 +49,7 @@ max_step_time <- one_day$interval[which.max(one_day$steps)]
 ```
 
 5-minute interval on average across all the days in the dataset,
-the maximum number of steps is 206.2, the interval is 835.
+The maximum number of steps is 206.2, the interval is 835.
 
 ## Imputing missing values
 
@@ -86,9 +85,28 @@ nomiss_mean_per_day <- mean(nomiss_per_day$steps)
 nomiss_median_per_day <- median(nomiss_per_day$steps)
 ```
 
-the **mean** total number of steps taken per day is 10766.2.
+The **mean** total number of steps taken per day is 10766.2.
 
-the **median** total number of steps taken per day is 10766.2.
+The **median** total number of steps taken per day is 10766.2.
 
+These values differ from the estimates from the first part of the assignment.
+
+The estimates of the total daily number of steps is get larger by imputing missing data.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+```r
+nomiss$weekday <- ifelse(weekdays(nomiss$date) %in% c('Saturday', 'Sunday', '星期六', '星期日'), 'weekend', 'weekday')
+nomiss$weekday <- factor(nomiss$weekday)
+```
+
+
+```r
+library(ggplot2)
+
+DF <- ddply(nomiss, .(interval, weekday), summarize, steps=mean(steps))
+qplot(interval, steps, data=DF, geom='line', facets=~ weekday)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
